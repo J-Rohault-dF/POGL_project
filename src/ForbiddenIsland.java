@@ -9,6 +9,7 @@ public class ForbiddenIsland {
 	ForbiddenIsland() {
 		this.grid = new Grid();
 		this.players = new ArrayList<>();
+		for(int i=0; i<4; i++) {this.players.add(new Player());}
 		this.isFinished = false;
 		this.currentPlayer = 0;
 	}
@@ -18,6 +19,8 @@ public class ForbiddenIsland {
 
 		ForbiddenIsland game = new ForbiddenIsland();
 
+		System.out.println(game.grid);
+
 		while(!game.isFinished) {
 			int currentPlayer = (game.currentPlayer+1)%game.players.size();
 
@@ -26,6 +29,8 @@ public class ForbiddenIsland {
 			//STEP TWO
 
 			//STEP THREE
+
+			game.isFinished = true; //for testing
 		}
 	}
 }
