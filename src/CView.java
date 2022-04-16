@@ -7,6 +7,7 @@ import javax.swing.*;
 ENTIRE CODE COPIED FROM CONWAY.JAVA
  */
 
+@SuppressWarnings("FieldCanBeLocal")
 public class CView {
 	private JFrame frame;
 	private GridView grid;
@@ -49,17 +50,27 @@ class GridView extends JPanel implements Observer {
 		super.repaint();
 		for(int i=0; i<6; i++) {
 			for(int j=0; j<6; j++) {
-				paintCell(g, game.getCell(i, j), i, j);
+				paintCell(g, game.getCell(i, j));
 			}
 		}
 	}
 
-	private void paintCell(Graphics g, Cell c, int x, int y) {
-		g.setColor(((x+y)%2 == 0) ? Color.BLACK : Color.GRAY);
-		g.fillRect((x*SIZE), (y*SIZE), SIZE, SIZE);
+	private void paintCell(Graphics g, Cell c) {
+		if(c == null) {return;} //If the cell is null, it is outside the board and thus not showed
+
+		g.setColor(((c.getX()+c.getY())%2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
+		g.fillRect((c.getX()*SIZE), (c.getY()*SIZE), SIZE, SIZE);
+
+		switch (c.getSituation()) { //Dryness overlay
+			case Dry -> g.setColor(new Color(0, 0, 255, 0));
+			case Inundated -> g.setColor(new Color(0, 0, 255, 127));
+			case Submerged -> g.setColor(new Color(0, 0, 255, 191));
+		}
+		g.fillRect((c.getX()*SIZE), (c.getY()*SIZE), SIZE, SIZE);
 	}
 }
 
+@SuppressWarnings("ALL")
 class CommandView extends JPanel {
 	private ForbiddenIsland game;
 
@@ -82,13 +93,13 @@ class Controller implements ActionListener {
 }
 
 interface Observer {
-	public void update();
+	void update();
 }
 
 abstract class Observable {
 	private ArrayList<Observer> observers;
 	public Observable() {
-		this.observers = new ArrayList<Observer>();
+		this.observers = new ArrayList<>();
 	}
 
 	public void addObserver(Observer o) {
