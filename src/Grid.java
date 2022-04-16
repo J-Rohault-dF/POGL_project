@@ -6,14 +6,23 @@ public class Grid {
 	private final Cell[] cells;
 
 	Grid() {
-		cells = new Cell[24];
+		this.cells = new Cell[24];
 		int x = 0;
 		int y = 0;
-		for(int i=0; i<24; i++) {
-			cells[i] = new Cell(x+((6-Grid.getLineLength(y))/2), y);
+		for(int i=0; i<24; i++) { //Adds all the cells
+			this.cells[i] = new Cell(x+((6-Grid.getLineLength(y))/2), y);
 
 			x++;
 			if(x >= Grid.getLineLength(y)) {y++; x = 0;}
+		}
+
+		for(int i=0; i<24; i++) { //Gives each cell its neighbors
+			Cell c = this.cells[i];
+
+			c.setNeighbor(this.getCell(c.getX(), c.getY()-1), 0);
+			c.setNeighbor(this.getCell(c.getX()+1, c.getY()), 1);
+			c.setNeighbor(this.getCell(c.getX(), c.getY()+1), 2);
+			c.setNeighbor(this.getCell(c.getX()-1, c.getY()), 3);
 		}
 	}
 

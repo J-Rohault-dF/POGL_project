@@ -10,7 +10,12 @@ public class ForbiddenIsland extends Observable {
 	ForbiddenIsland() {
 		this.grid = new Grid();
 		this.players = new ArrayList<>();
-		for(int i=0; i<4; i++) {this.players.add(new Player(this.grid));}
+
+		this.players.add(new Player(this.grid, new Cell(2, 2))); //TODO: Put actual starting positions
+		this.players.add(new Player(this.grid, new Cell(2, 3)));
+		this.players.add(new Player(this.grid, new Cell(3, 2)));
+		this.players.add(new Player(this.grid, new Cell(3, 3)));
+
 		this.isFinished = false;
 		this.currentPlayer = 0;
 	}
