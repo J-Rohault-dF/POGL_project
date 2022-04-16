@@ -1,6 +1,7 @@
+import java.awt.*;
 import java.util.ArrayList;
 
-public class ForbiddenIsland {
+public class ForbiddenIsland extends Observable {
 	private Grid grid;
 	private ArrayList<Player> players;
 	private boolean isFinished;
@@ -17,20 +18,28 @@ public class ForbiddenIsland {
 	public static void main(String[] args) {
 		//TODO: some parameters and setup here
 
-		ForbiddenIsland game = new ForbiddenIsland();
+		EventQueue.invokeLater(() -> {
+			ForbiddenIsland game = new ForbiddenIsland();
+			CView view = new CView(game);
 
-		System.out.println(game.grid);
+			System.out.println(game.grid);
 
-		while(!game.isFinished) {
-			int currentPlayer = (game.currentPlayer+1)%game.players.size();
+			while (!game.isFinished) {
+				int currentPlayer = (game.currentPlayer + 1) % game.players.size();
 
-			//STEP ONE
+				//STEP ONE
 
-			//STEP TWO
+				//STEP TWO
 
-			//STEP THREE
+				//STEP THREE
 
-			game.isFinished = true; //for testing
-		}
+				game.isFinished = true; //for testing
+			}
+		});
+	}
+
+	public Cell getCell(int x, int y) {
+		return this.grid.getCell(x, y);
 	}
 }
+

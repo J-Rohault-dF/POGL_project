@@ -35,4 +35,8 @@ public class Grid {
 
 		return line;
 	}
+
+	public Cell getCell(int x, int y) {
+		return this.cells[x][y];
+	}
 }
