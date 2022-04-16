@@ -2,19 +2,19 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class ForbiddenIsland extends Observable {
-	private Grid grid;
+	private Board board;
 	private ArrayList<Player> players;
 	private boolean isFinished;
 	private int currentPlayer;
 
 	ForbiddenIsland() {
-		this.grid = new Grid();
+		this.board = new Board();
 		this.players = new ArrayList<>();
 
-		this.players.add(new Player(this.grid, new Cell(2, 2))); //TODO: Put actual starting positions
-		this.players.add(new Player(this.grid, new Cell(2, 3)));
-		this.players.add(new Player(this.grid, new Cell(3, 2)));
-		this.players.add(new Player(this.grid, new Cell(3, 3)));
+		this.players.add(new Player(this.board, new Cell(2, 2))); //TODO: Put actual starting positions
+		this.players.add(new Player(this.board, new Cell(2, 3)));
+		this.players.add(new Player(this.board, new Cell(3, 2)));
+		this.players.add(new Player(this.board, new Cell(3, 3)));
 
 		this.isFinished = false;
 		this.currentPlayer = 0;
@@ -42,8 +42,8 @@ public class ForbiddenIsland extends Observable {
 	}
 
 	//Functions relayed to the grid
-	public Cell getCell(int x, int y) {return this.grid.getCell(x, y);}
-	public Cell getCell(int n) {return this.grid.getCell(n);}
-	public void floodRandomCells(int i) {this.grid.floodRandomCells(i);}
+	public Tile getTile(int x, int y) {return this.board.getTile(x, y);}
+	public Tile getTile(int n) {return this.board.getTile(n);}
+	public void floodRandomCells(int i) {this.board.floodRandomCells(i);}
 }
 

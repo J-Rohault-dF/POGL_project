@@ -2,27 +2,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Grid {
-	private final Cell[] cells;
+public class Board {
+	private final Tile[] tiles;
 
-	Grid() {
-		this.cells = new Cell[24];
+	Board() {
+		this.tiles = new Tile[24];
 		int x = 0;
 		int y = 0;
 		for(int i=0; i<24; i++) { //Adds all the cells
-			this.cells[i] = new Cell(x+((6-Grid.getLineLength(y))/2), y);
+			this.tiles[i] = new Tile(new Cell(x+((6- Board.getLineLength(y))/2), y));
 
 			x++;
-			if(x >= Grid.getLineLength(y)) {y++; x = 0;}
+			if(x >= Board.getLineLength(y)) {y++; x = 0;}
 		}
 
 		for(int i=0; i<24; i++) { //Gives each cell its neighbors
-			Cell c = this.cells[i];
+			Cell c = this.tiles[i].getCell();
 
-			c.setNeighbor(this.getCell(c.getX(), c.getY()-1), 0);
-			c.setNeighbor(this.getCell(c.getX()+1, c.getY()), 1);
-			c.setNeighbor(this.getCell(c.getX(), c.getY()+1), 2);
-			c.setNeighbor(this.getCell(c.getX()-1, c.getY()), 3);
+			c.setNeighbor(this.getTile(c.getX(), c.getY()-1).getCell(), 0);
+			c.setNeighbor(this.getTile(c.getX()+1, c.getY()).getCell(), 1);
+			c.setNeighbor(this.getTile(c.getX(), c.getY()+1).getCell(), 2);
+			c.setNeighbor(this.getTile(c.getX()-1, c.getY()).getCell(), 3);
 		}
 	}
 
@@ -31,7 +31,7 @@ public class Grid {
 	 * @param y coordinate
 	 * @return Cell at (x,y) cartesian coordinates
 	 */
-	public Cell getCell(int x, int y) {
+	public Tile getTile(int x, int y) {
 		int lineStart;
 		switch(y) {
 			default-> lineStart = 0;
@@ -41,15 +41,15 @@ public class Grid {
 			case 4 -> lineStart = 18;
 			case 5 -> lineStart = 22;
 		}
-		return this.cells[(lineStart+x)];
+		return this.tiles[(lineStart+x)];
 	}
 
 	/**
 	 * @param n number
 	 * @return Cell at index n
 	 */
-	public Cell getCell(int n) {
-		return this.cells[n];
+	public Tile getTile(int n) {
+		return this.tiles[n];
 	}
 
 	private static int getLineLength(int y) {
@@ -57,16 +57,16 @@ public class Grid {
 	}
 
 	public void floodRandomCells(int i) {
-		ArrayList<Cell> nonSubmergedCells = new ArrayList<>(Arrays.asList(this.cells));
+		ArrayList<Tile> nonSubmergedCells = new ArrayList<>(Arrays.asList(this.tiles));
 
 		Random random = new Random();
 
 		while(i > 0) { //While there are still un-submerged cells:
 			int pickedIndex = random.nextInt(nonSubmergedCells.size());
-			Cell pickedCell = this.getCell(pickedIndex);
+			Tile pickedTile = this.getTile(pickedIndex);
 
-			if(pickedCell.getSituation() == Situation.Dry || pickedCell.getSituation() == Situation.Inundated) { //If the cell can be inundated: inundate it
-				pickedCell.flood();
+			if(pickedTile.getSituation() == Situation.Dry || pickedTile.getSituation() == Situation.Inundated) { //If the cell can be inundated: inundate it
+				pickedTile.flood();
 				i--;
 			} else { //If it can't (already submerged), remove it from the list of cells that can be, and find another one
 				nonSubmergedCells.remove(pickedIndex);

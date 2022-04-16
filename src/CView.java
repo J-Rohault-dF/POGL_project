@@ -49,22 +49,22 @@ class GridView extends JPanel implements Observer {
 
 		super.repaint();
 		for(int n=0; n<24; n++) {
-			paintCell(g, game.getCell(n));
+			paintTile(g, game.getTile(n));
 		}
 	}
 
-	private void paintCell(Graphics g, Cell c) {
-		if(c == null) {return;} //If the cell is null, it is outside the board and thus not showed
+	private void paintTile(Graphics g, Tile t) {
+		if(t == null) {return;} //If the cell is null, it is outside the board and thus not showed
 
-		g.setColor(((c.getX()+c.getY())%2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
-		g.fillRect((c.getX()*SIZE), (c.getY()*SIZE), SIZE, SIZE);
+		g.setColor(((t.getX()+t.getY())%2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
+		g.fillRect((t.getX()*SIZE), (t.getY()*SIZE), SIZE, SIZE);
 
-		switch (c.getSituation()) { //Dryness overlay
+		switch (t.getSituation()) { //Dryness overlay
 			case Dry -> g.setColor(new Color(0, 0, 255, 0));
 			case Inundated -> g.setColor(new Color(0, 0, 255, 85));
 			case Submerged -> g.setColor(new Color(0, 0, 255, 191));
 		}
-		g.fillRect((c.getX()*SIZE), (c.getY()*SIZE), SIZE, SIZE);
+		g.fillRect((t.getX()*SIZE), (t.getY()*SIZE), SIZE, SIZE);
 	}
 }
 
