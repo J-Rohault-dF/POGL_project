@@ -10,7 +10,7 @@ public class ForbiddenIsland extends Observable {
 	ForbiddenIsland() {
 		this.grid = new Grid();
 		this.players = new ArrayList<>();
-		for(int i=0; i<4; i++) {this.players.add(new Player());}
+		for(int i=0; i<4; i++) {this.players.add(new Player(this.grid));}
 		this.isFinished = false;
 		this.currentPlayer = 0;
 	}

@@ -1,11 +1,13 @@
 import java.util.ArrayList;
 
 public class Player {
-	private ArrayList<Item> keys;
-	private ArrayList<Item> artefacts;
+	private Grid grid;
+	private ArrayList<Card> hand;
+	private ArrayList<Treasure> artefacts;
 
-	Player() {
-		this.keys = new ArrayList<>();
+	Player(Grid g) {
+		this.grid = g;
+		this.hand = new ArrayList<>();
 		this.artefacts = new ArrayList<>();
 	}
 }
