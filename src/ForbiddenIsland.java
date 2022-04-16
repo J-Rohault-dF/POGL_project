@@ -22,8 +22,6 @@ public class ForbiddenIsland extends Observable {
 			ForbiddenIsland game = new ForbiddenIsland();
 			CView view = new CView(game);
 
-			System.out.println(game.grid);
-
 			while (!game.isFinished) {
 				int currentPlayer = (game.currentPlayer + 1) % game.players.size();
 
@@ -38,8 +36,9 @@ public class ForbiddenIsland extends Observable {
 		});
 	}
 
-	public Cell getCell(int x, int y) {
-		return this.grid.getCell(x, y);
-	}
+	//Functions relayed to the grid
+	public Cell getCell(int x, int y) {return this.grid.getCell(x, y);}
+	public Cell getCell(int n) {return this.grid.getCell(n);}
+	public void floodRandomCells(int i) {this.grid.floodRandomCells(i);}
 }
 

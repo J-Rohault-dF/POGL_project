@@ -48,10 +48,8 @@ class GridView extends JPanel implements Observer {
 	public void paintComponent(Graphics g) {
 
 		super.repaint();
-		for(int i=0; i<6; i++) {
-			for(int j=0; j<6; j++) {
-				paintCell(g, game.getCell(i, j));
-			}
+		for(int n=0; n<24; n++) {
+			paintCell(g, game.getCell(n));
 		}
 	}
 
@@ -63,32 +61,40 @@ class GridView extends JPanel implements Observer {
 
 		switch (c.getSituation()) { //Dryness overlay
 			case Dry -> g.setColor(new Color(0, 0, 255, 0));
-			case Inundated -> g.setColor(new Color(0, 0, 255, 127));
+			case Inundated -> g.setColor(new Color(0, 0, 255, 85));
 			case Submerged -> g.setColor(new Color(0, 0, 255, 191));
 		}
 		g.fillRect((c.getX()*SIZE), (c.getY()*SIZE), SIZE, SIZE);
 	}
 }
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("FieldCanBeLocal")
 class CommandView extends JPanel {
 	private ForbiddenIsland game;
 
 	public CommandView(ForbiddenIsland game) {
 		this.game = game;
-		JButton advanceButton = new JButton(">");
-		this.add(advanceButton);
+		JButton endRoundButton = new JButton("End round");
+		endRoundButton.setActionCommand("endRound");
+		this.add(endRoundButton);
 
 		Controller ctrl = new Controller(game);
-		advanceButton.addActionListener(ctrl);
+		endRoundButton.addActionListener(ctrl);
 	}
 }
 
 class Controller implements ActionListener {
 	ForbiddenIsland game;
+
 	public Controller(ForbiddenIsland game) {this.game = game;}
+
 	public void actionPerformed(ActionEvent e) {
-		//game.advance();
+		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Line copied from StackOverflow
+
+		switch(actionCommand) {
+			case "endRound" -> game.floodRandomCells(3);
+		}
+
 	}
 }
 

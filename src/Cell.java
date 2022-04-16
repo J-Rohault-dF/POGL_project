@@ -18,4 +18,11 @@ public class Cell {
 	public String toString() {
 		return "<Cell "+this.x+" "+this.y+">";
 	}
+
+	public void flood() {
+		switch(this.situation) {
+			case Dry -> this.situation = Situation.Inundated;
+			case Inundated -> this.situation = Situation.Submerged;
+		}
+	}
 }
