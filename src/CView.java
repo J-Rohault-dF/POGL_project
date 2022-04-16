@@ -54,15 +54,14 @@ class GridView extends JPanel implements Observer {
 	}
 
 	private void paintTile(Graphics g, Tile t) {
-		if(t == null) {return;} //If the cell is null, it is outside the board and thus not showed
+		if(t == null || t.getStatus() == Status.Submerged) {return;} //If the cell is null, it is outside the board and thus not showed
 
 		g.setColor(((t.getX()+t.getY())%2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
 		g.fillRect((t.getX()*SIZE), (t.getY()*SIZE), SIZE, SIZE);
 
-		switch (t.getSituation()) { //Dryness overlay
+		switch (t.getStatus()) { //Dryness overlay
 			case Dry -> g.setColor(new Color(0, 0, 255, 0));
-			case Inundated -> g.setColor(new Color(0, 0, 255, 85));
-			case Submerged -> g.setColor(new Color(0, 0, 255, 191));
+			case Flooded -> g.setColor(new Color(0, 0, 255, 85));
 		}
 		g.fillRect((t.getX()*SIZE), (t.getY()*SIZE), SIZE, SIZE);
 	}

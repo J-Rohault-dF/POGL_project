@@ -65,7 +65,7 @@ public class Board {
 			int pickedIndex = random.nextInt(nonSubmergedCells.size());
 			Tile pickedTile = this.getTile(pickedIndex);
 
-			if(pickedTile.getSituation() == Situation.Dry || pickedTile.getSituation() == Situation.Inundated) { //If the cell can be inundated: inundate it
+			if(pickedTile.getStatus() == Status.Dry || pickedTile.getStatus() == Status.Flooded) { //If the cell can be inundated: inundate it
 				pickedTile.flood();
 				i--;
 			} else { //If it can't (already submerged), remove it from the list of cells that can be, and find another one

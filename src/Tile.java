@@ -2,24 +2,25 @@ public class Tile {
 	private Cell cell;
 	private String name;
 	private TreasureType treasure;
-	private Situation situation;
+	private Status status;
 
 	public Tile(Cell c) {
 		this.cell = c;
-		this.situation = Situation.Dry;
+		this.status = Status.Dry;
 	}
 
 	//Getters
 	public int getX() {return this.cell.getX();}
 	public int getY() {return this.cell.getY();}
-	public Situation getSituation() {return this.situation;}
+	public Status getStatus() {return this.status;}
 	public Cell getCell() {return this.cell;}
 
 	//Methods
 	public void flood() {
-		switch(this.situation) {
-			case Dry -> this.situation = Situation.Inundated;
-			case Inundated -> this.situation = Situation.Submerged;
+		//TODO: Replace “submerged” with actually making the tile null
+		switch(this.status) {
+			case Dry -> this.status = Status.Flooded;
+			case Flooded -> this.status = Status.Submerged;
 		}
 	}
 }
