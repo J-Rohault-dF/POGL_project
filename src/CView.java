@@ -64,10 +64,10 @@ class GridView extends JPanel implements Observer {
 			g.setColor(((c.getX() + c.getY()) % 2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
 			g.fillRect((c.getX() * SIZE + (int) (SIZE * 0.05)), (c.getY() * SIZE + (int) (SIZE * 0.05)), (int) (SIZE * 0.9), (int) (SIZE * 0.9));
 
-			switch (t.getStatus()) { //Dryness overlay
-				case Dry -> g.setColor(new Color(0, 0, 255, 0));
-				case Flooded -> g.setColor(new Color(0, 0, 255, 85));
-			}
+			//Dryness overlay
+			if (t.isFlooded()) {g.setColor(new Color(0, 0, 255, 85));}
+			else                {g.setColor(new Color(0, 0, 255, 0));}
+
 			g.fillRect((c.getX() * SIZE + (int) (SIZE * 0.2)), (c.getY() * SIZE + (int) (SIZE * 0.2)), (int) (SIZE * 0.6), (int) (SIZE * 0.6));
 
 		}

@@ -2,25 +2,23 @@ public class Tile {
 	private String name;
 	private Cell cell;
 	private TreasureType treasure;
-	private Status status;
+	private boolean isFlooded;
 
 	public Tile(Cell cell) {
-		this.status = Status.Dry;
+		this.isFlooded = false;
 		this.cell = cell;
 	}
 
 	//Getters
-	public Status getStatus() {return this.status;}
+	public boolean isFlooded() {return this.isFlooded;}
 	public Cell getCell() {return this.cell;}
 
-	public String toString() {return "< Tile "+this.name+" "+this.status+">";}
+	public String toString() {return "< Tile "+this.name+" "+this.isFlooded +">";}
 
 	//Methods
 	public void flood() {
 		//TODO: Replace “submerged” with actually making the tile null
-		switch(this.status) {
-			case Dry -> this.status = Status.Flooded;
-			case Flooded -> this.cell.setTile(null);
-		}
+		if(!this.isFlooded) {this.isFlooded = true;}
+		else {this.cell.setTile(null);}
 	}
 }
