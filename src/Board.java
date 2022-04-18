@@ -28,7 +28,6 @@ public class Board {
 		for(int i=0; i<36; i++) { //Gives each cell its neighbors
 			Cell c = this.cells[i];
 
-			System.out.println(""+i+" "+c);
 			c.setNeighbor(this.getCell(c.getX(), c.getY()-1), 0);
 			c.setNeighbor(this.getCell(c.getX()+1, c.getY()), 1);
 			c.setNeighbor(this.getCell(c.getX(), c.getY()+1), 2);
@@ -61,8 +60,18 @@ public class Board {
 		return this.cells[n];
 	}
 
-	private static int getLineLength(int y) {
-		return (y == 0 || y == 5) ? 2 : (y == 1 || y == 4) ? 4 : 6;
+	public String toString() {
+		String s = "";
+
+		for(int i=0; i<6; i++) {
+			for(int j=0; j<6; j++) {
+				if(this.getCell(i*6 + j).getTile() != null) {s += "@";}
+				else {s += " ";}
+			}
+			s += '\n';
+		}
+
+		return s;
 	}
 
 	public void floodRandomCells(int i) {

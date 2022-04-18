@@ -49,13 +49,18 @@ class GridView extends JPanel implements Observer {
 	public void paintComponent(Graphics g) {
 
 		super.repaint();
+		this.repaint();
 		for(int n=0; n<36; n++) {
-			paintTile(g, game.getCell(n));
+			paintCell(g, game.getCell(n));
 		}
 	}
 
-	private void paintTile(Graphics g, Cell c) {
+	private void paintCell(Graphics g, Cell c) {
 		Tile t = c.getTile();
+
+		g.setColor(new Color(238, 238, 238));
+		g.fillRect((c.getX() * SIZE), (c.getY() * SIZE), SIZE, SIZE); //Hide previous board
+
 		//System.out.println(""+c+" "+c.getTile()+" "+t+" "+t.getStatus()+" "+(t.getStatus() == Status.Submerged)+" "+(t != null && t.getStatus() != Status.Submerged));
 		if(t != null) { //If the cell is null, it is outside the board and thus not showed
 

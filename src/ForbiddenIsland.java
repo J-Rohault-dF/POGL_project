@@ -47,5 +47,7 @@ public class ForbiddenIsland extends Observable {
 	public Cell getCell(int x, int y) {return this.board.getCell(x, y);}
 	public Cell getCell(int n) {return this.board.getCell(n);}
 	public void floodRandomCells(int i) {this.board.floodRandomCells(i);}
+
+	public Board getBoard() {return this.board;}
 }
 
