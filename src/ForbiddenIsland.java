@@ -3,18 +3,18 @@ import java.util.ArrayList;
 
 public class ForbiddenIsland extends Observable {
 	private Board board;
-	private ArrayList<Player> players;
+	private Player[] players;
 	private boolean isFinished;
 	private int currentPlayer;
 
 	ForbiddenIsland() {
 		this.board = new Board();
-		this.players = new ArrayList<>();
+		this.players = new Player[4];
 
-		this.players.add(new Player(this.board, this.board.getCell(2, 2))); //TODO: Put actual starting positions
-		this.players.add(new Player(this.board, this.board.getCell(2, 3)));
-		this.players.add(new Player(this.board, this.board.getCell(3, 2)));
-		this.players.add(new Player(this.board, this.board.getCell(3, 3)));
+		this.players[0] = new Player(this.board, this.board.getCell(2, 2)); //TODO: Put actual starting positions
+		this.players[1] = new Player(this.board, this.board.getCell(2, 3));
+		this.players[2] = new Player(this.board, this.board.getCell(3, 2));
+		this.players[3] = new Player(this.board, this.board.getCell(3, 3));
 
 		this.isFinished = false;
 		this.currentPlayer = 0;
@@ -28,7 +28,9 @@ public class ForbiddenIsland extends Observable {
 			CView view = new CView(game);
 
 			while (!game.isFinished) {
-				int currentPlayer = (game.currentPlayer + 1) % game.players.size();
+				int currentPlayer = (game.currentPlayer + 1) % 4;
+				view.getActionsPanel().startTurn(game.players[currentPlayer]);
+				game.notifyObservers();
 
 				//STEP ONE
 

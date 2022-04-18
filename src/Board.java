@@ -11,18 +11,18 @@ public class Board {
 			int x = i%6;
 			int y = i/6;
 
-			Cell c = new Cell(x, y, new Tile());
+			Cell c = new Cell(x, y, null);
 
-			if( //Spaghetti code, but it does the job (removes cells out of the board)
+			if( !( //Spaghetti code, but it does the job (removes cells out of the board)
 					(x == 0 && y == 0) || (x == 1 && y == 0) || (x == 0 && y == 1) ||
 							(x == 4 && y == 0) || (x == 5 && y == 0) || (x == 5 && y == 1) ||
 							(x == 0 && y == 5) || (x == 1 && y == 5) || (x == 0 && y == 4) ||
 							(x == 4 && y == 5) || (x == 5 && y == 5) || (x == 5 && y == 4)
-			) {
-				c.setTile(null);
+			) ) {
+				c.setTile(new Tile(c));
 			}
 
-			this.cells[i] = new Cell(i%6, i/6, new Tile());
+			this.cells[i] = c;
 		}
 
 		for(int i=0; i<36; i++) { //Gives each cell its neighbors
@@ -74,7 +74,7 @@ public class Board {
 			int pickedIndex = random.nextInt(nonSubmergedCells.size());
 			Cell pickedCell = this.getCell(pickedIndex);
 
-			if(pickedCell.getTile().getStatus() == Status.Dry || pickedCell.getTile().getStatus() == Status.Flooded) { //If the cell can be inundated: inundate it
+			if(pickedCell.getTile() != null && (pickedCell.getTile().getStatus() == Status.Dry || pickedCell.getTile().getStatus() == Status.Flooded)) { //If the cell can be inundated: inundate it
 				pickedCell.getTile().flood();
 				i--;
 			} else { //If it can't (already submerged), remove it from the list of cells that can be, and find another one

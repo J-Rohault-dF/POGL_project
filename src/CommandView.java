@@ -1,10 +1,10 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 class CommandView extends JPanel {
 	private ForbiddenIsland game;
+	ActionsPanel actionsPanel;
 
 	public CommandView(ForbiddenIsland game) {
 		this.game = game;
@@ -12,23 +12,26 @@ class CommandView extends JPanel {
 		endRoundButton.setActionCommand("endRound");
 		this.add(endRoundButton);
 
-		JPanel remainingActionsPanel = new RemainingActionsPanel();
-		this.add(remainingActionsPanel);
+		actionsPanel = new ActionsPanel();
+		this.add(actionsPanel);
 
 		Controller ctrl = new Controller(game);
 		endRoundButton.addActionListener(ctrl);
 	}
+
+	public ActionsPanel getActionsPanel() {return actionsPanel;}
 }
 
-class RemainingActionsPanel extends JPanel {
+class ActionsPanel extends JPanel {
 	int remainingActions;
 	MovementPanel movementPanel;
 	DrainingPanel drainingPanel;
 	InventoryPanel inventoryPanel;
 	ArtifactPanel artifactPanel;
+	Player currentPlayer;
 	JLabel label;
 
-	public RemainingActionsPanel() {
+	public ActionsPanel() {
 		this.remainingActions = 0;
 		this.label = new JLabel("No remaining actions");
 		this.add(label);
@@ -39,7 +42,8 @@ class RemainingActionsPanel extends JPanel {
 		this.artifactPanel = new ArtifactPanel();
 	}
 
-	public void resetRemainingActions() {
+	public void startTurn(Player player) {
+		this.currentPlayer = player;
 		this.remainingActions = 3;
 		this.label.setText("Remaining actions: "+this.remainingActions);
 	}
@@ -72,7 +76,7 @@ class MovementPanel extends JPanel {
 	}
 
 	public void disableButtons() {for(JButton b : this.buttons) {b.setEnabled(false);}}
-	public void enableButtons(boolean isDiagonal) {
+	public void enableButtons(boolean isDiagonal) { //TODO: Only enable buttons for which the tile exists
 		this.buttons[1].setEnabled(true);
 		this.buttons[3].setEnabled(true);
 		this.buttons[5].setEnabled(true);

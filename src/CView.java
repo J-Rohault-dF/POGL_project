@@ -26,6 +26,8 @@ public class CView {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
+
+	public ActionsPanel getActionsPanel() {return this.commands.getActionsPanel();}
 }
 
 class GridView extends JPanel implements Observer {
@@ -54,17 +56,21 @@ class GridView extends JPanel implements Observer {
 
 	private void paintTile(Graphics g, Cell c) {
 		Tile t = c.getTile();
-		System.out.println(""+c+" "+c.getTile());
-		if(t == null || t.getStatus() == Status.Submerged) {return;} //If the cell is null, it is outside the board and thus not showed
+		//System.out.println(""+c+" "+c.getTile()+" "+t+" "+t.getStatus()+" "+(t.getStatus() == Status.Submerged)+" "+(t != null && t.getStatus() != Status.Submerged));
+		if(t != null) { //If the cell is null, it is outside the board and thus not showed
 
-		g.setColor(((c.getX()+c.getY())%2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
-		g.fillRect((c.getX()*SIZE), (c.getY()*SIZE), SIZE, SIZE);
+			//System.out.println(""+(t != null && t.getStatus() != Status.Submerged));
 
-		switch (t.getStatus()) { //Dryness overlay
-			case Dry -> g.setColor(new Color(0, 0, 255, 0));
-			case Flooded -> g.setColor(new Color(0, 0, 255, 85));
+			g.setColor(((c.getX() + c.getY()) % 2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
+			g.fillRect((c.getX() * SIZE + (int) (SIZE * 0.05)), (c.getY() * SIZE + (int) (SIZE * 0.05)), (int) (SIZE * 0.9), (int) (SIZE * 0.9));
+
+			switch (t.getStatus()) { //Dryness overlay
+				case Dry -> g.setColor(new Color(0, 0, 255, 0));
+				case Flooded -> g.setColor(new Color(0, 0, 255, 85));
+			}
+			g.fillRect((c.getX() * SIZE + (int) (SIZE * 0.2)), (c.getY() * SIZE + (int) (SIZE * 0.2)), (int) (SIZE * 0.6), (int) (SIZE * 0.6));
+
 		}
-		g.fillRect((c.getX()*SIZE), (c.getY()*SIZE), SIZE, SIZE);
 	}
 }
 
