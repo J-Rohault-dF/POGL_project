@@ -1,19 +1,16 @@
 public class Tile {
-	private Cell cell;
 	private String name;
 	private TreasureType treasure;
 	private Status status;
 
-	public Tile(Cell c) {
-		this.cell = c;
+	public Tile() {
 		this.status = Status.Dry;
 	}
 
 	//Getters
-	public int getX() {return this.cell.getX();}
-	public int getY() {return this.cell.getY();}
 	public Status getStatus() {return this.status;}
-	public Cell getCell() {return this.cell;}
+
+	public String toString() {return "< Tile "+this.name+" "+this.status+">";}
 
 	//Methods
 	public void flood() {

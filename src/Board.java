@@ -3,26 +3,36 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Board {
-	private final Tile[] tiles;
+	private final Cell[] cells;
 
 	Board() {
-		this.tiles = new Tile[24];
-		int x = 0;
-		int y = 0;
-		for(int i=0; i<24; i++) { //Adds all the cells
-			this.tiles[i] = new Tile(new Cell(x+((6- Board.getLineLength(y))/2), y));
+		this.cells = new Cell[36];
+		for(int i=0; i<36; i++) { //Adds all the cells
+			int x = i%6;
+			int y = i/6;
 
-			x++;
-			if(x >= Board.getLineLength(y)) {y++; x = 0;}
+			Cell c = new Cell(x, y, new Tile());
+
+			if( //Spaghetti code, but it does the job (removes cells out of the board)
+					(x == 0 && y == 0) || (x == 1 && y == 0) || (x == 0 && y == 1) ||
+							(x == 4 && y == 0) || (x == 5 && y == 0) || (x == 5 && y == 1) ||
+							(x == 0 && y == 5) || (x == 1 && y == 5) || (x == 0 && y == 4) ||
+							(x == 4 && y == 5) || (x == 5 && y == 5) || (x == 5 && y == 4)
+			) {
+				c.setTile(null);
+			}
+
+			this.cells[i] = new Cell(i%6, i/6, new Tile());
 		}
 
-		for(int i=0; i<24; i++) { //Gives each cell its neighbors
-			Cell c = this.tiles[i].getCell();
+		for(int i=0; i<36; i++) { //Gives each cell its neighbors
+			Cell c = this.cells[i];
 
-			c.setNeighbor(this.getTile(c.getX(), c.getY()-1).getCell(), 0);
-			c.setNeighbor(this.getTile(c.getX()+1, c.getY()).getCell(), 1);
-			c.setNeighbor(this.getTile(c.getX(), c.getY()+1).getCell(), 2);
-			c.setNeighbor(this.getTile(c.getX()-1, c.getY()).getCell(), 3);
+			System.out.println(""+i+" "+c);
+			c.setNeighbor(this.getCell(c.getX(), c.getY()-1), 0);
+			c.setNeighbor(this.getCell(c.getX()+1, c.getY()), 1);
+			c.setNeighbor(this.getCell(c.getX(), c.getY()+1), 2);
+			c.setNeighbor(this.getCell(c.getX()-1, c.getY()), 3);
 		}
 	}
 
@@ -31,25 +41,24 @@ public class Board {
 	 * @param y coordinate
 	 * @return Cell at (x,y) cartesian coordinates
 	 */
-	public Tile getTile(int x, int y) {
-		int lineStart;
-		switch(y) {
-			default-> lineStart = 0;
-			case 1 -> lineStart = 2;
-			case 2 -> lineStart = 6;
-			case 3 -> lineStart = 12;
-			case 4 -> lineStart = 18;
-			case 5 -> lineStart = 22;
-		}
-		return this.tiles[(lineStart+x)];
+	public Cell getCell(int x, int y) {
+		if(x < 0 || x > 5 || y < 0 || y > 5) {return new Cell(x, y, null);}
+		if( //Spaghetti code, but it does the job (removes cells out of the board)
+			(x == 0 && y == 0) || (x == 1 && y == 0) || (x == 0 && y == 1) ||
+			(x == 4 && y == 0) || (x == 5 && y == 0) || (x == 5 && y == 1) ||
+			(x == 0 && y == 5) || (x == 1 && y == 5) || (x == 0 && y == 4) ||
+			(x == 4 && y == 5) || (x == 5 && y == 5) || (x == 5 && y == 4)
+		) {return new Cell(x, y, null);}
+
+		return this.cells[x+(6*x)];
 	}
 
 	/**
 	 * @param n number
 	 * @return Cell at index n
 	 */
-	public Tile getTile(int n) {
-		return this.tiles[n];
+	public Cell getCell(int n) {
+		return this.cells[n];
 	}
 
 	private static int getLineLength(int y) {
@@ -57,23 +66,22 @@ public class Board {
 	}
 
 	public void floodRandomCells(int i) {
-		ArrayList<Tile> nonSubmergedCells = new ArrayList<>(Arrays.asList(this.tiles));
+		ArrayList<Cell> nonSubmergedCells = new ArrayList<>(Arrays.asList(this.cells));
 
 		Random random = new Random();
 
 		while(i > 0) { //While there are still un-submerged cells:
 			int pickedIndex = random.nextInt(nonSubmergedCells.size());
-			Tile pickedTile = this.getTile(pickedIndex);
+			Cell pickedCell = this.getCell(pickedIndex);
 
-			if(pickedTile.getStatus() == Status.Dry || pickedTile.getStatus() == Status.Flooded) { //If the cell can be inundated: inundate it
-				pickedTile.flood();
+			if(pickedCell.getTile().getStatus() == Status.Dry || pickedCell.getTile().getStatus() == Status.Flooded) { //If the cell can be inundated: inundate it
+				pickedCell.getTile().flood();
 				i--;
 			} else { //If it can't (already submerged), remove it from the list of cells that can be, and find another one
 				nonSubmergedCells.remove(pickedIndex);
 			}
 
 			if(nonSubmergedCells.size() == 0) {break;} //If no cell can be submerged, nothing is done
-			//TODO: Check, can already submerged cells be picked?
 		}
 	}
 }

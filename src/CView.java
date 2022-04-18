@@ -1,6 +1,5 @@
 import java.util.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 /*
@@ -48,52 +47,24 @@ class GridView extends JPanel implements Observer {
 	public void paintComponent(Graphics g) {
 
 		super.repaint();
-		for(int n=0; n<24; n++) {
-			paintTile(g, game.getTile(n));
+		for(int n=0; n<36; n++) {
+			paintTile(g, game.getCell(n));
 		}
 	}
 
-	private void paintTile(Graphics g, Tile t) {
+	private void paintTile(Graphics g, Cell c) {
+		Tile t = c.getTile();
+		System.out.println(""+c+" "+c.getTile());
 		if(t == null || t.getStatus() == Status.Submerged) {return;} //If the cell is null, it is outside the board and thus not showed
 
-		g.setColor(((t.getX()+t.getY())%2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
-		g.fillRect((t.getX()*SIZE), (t.getY()*SIZE), SIZE, SIZE);
+		g.setColor(((c.getX()+c.getY())%2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
+		g.fillRect((c.getX()*SIZE), (c.getY()*SIZE), SIZE, SIZE);
 
 		switch (t.getStatus()) { //Dryness overlay
 			case Dry -> g.setColor(new Color(0, 0, 255, 0));
 			case Flooded -> g.setColor(new Color(0, 0, 255, 85));
 		}
-		g.fillRect((t.getX()*SIZE), (t.getY()*SIZE), SIZE, SIZE);
-	}
-}
-
-@SuppressWarnings("FieldCanBeLocal")
-class CommandView extends JPanel {
-	private ForbiddenIsland game;
-
-	public CommandView(ForbiddenIsland game) {
-		this.game = game;
-		JButton endRoundButton = new JButton("End round");
-		endRoundButton.setActionCommand("endRound");
-		this.add(endRoundButton);
-
-		Controller ctrl = new Controller(game);
-		endRoundButton.addActionListener(ctrl);
-	}
-}
-
-class Controller implements ActionListener {
-	ForbiddenIsland game;
-
-	public Controller(ForbiddenIsland game) {this.game = game;}
-
-	public void actionPerformed(ActionEvent e) {
-		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Line copied from StackOverflow
-
-		switch(actionCommand) {
-			case "endRound" -> game.floodRandomCells(3);
-		}
-
+		g.fillRect((c.getX()*SIZE), (c.getY()*SIZE), SIZE, SIZE);
 	}
 }
 
