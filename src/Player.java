@@ -22,7 +22,7 @@ public class Player {
 		Cell neighbor = this.cell.getNeighbor(direction);
 
 		//If not available then return false
-		if(neighbor == null) {return false;}
+		if(neighbor.getTile() == null) {return false;}
 
 		//If available then move
 		this.cell = neighbor;

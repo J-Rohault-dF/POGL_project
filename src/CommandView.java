@@ -16,7 +16,7 @@ class CommandView extends JPanel {
 
 		this.game = game;
 
-		actionsPanel = new ActionsPanel();
+		actionsPanel = new ActionsPanel(game);
 		this.add(actionsPanel);
 
 		findKeyPanel = new FindKeyPanel();
@@ -35,6 +35,7 @@ class CommandView extends JPanel {
 
 class ActionsPanel extends JPanel {
 	int remainingActions;
+	ForbiddenIsland game;
 	MovementPanel movementPanel;
 	DrainingPanel drainingPanel;
 	InventoryPanel inventoryPanel;
@@ -42,15 +43,17 @@ class ActionsPanel extends JPanel {
 	Player currentPlayer;
 	JLabel label;
 
-	public ActionsPanel() {
+	public ActionsPanel(ForbiddenIsland game) {
 		this.setLayout(new BoxLayout(this, 1));
 		this.setBorder(new CompoundBorder(new LineBorder(Color.lightGray), new EmptyBorder(4, 4, 4, 4)));
+
+		this.game = game;
 
 		this.remainingActions = 0;
 		this.label = new JLabel("No remaining actions");
 		this.add(label);
 
-		this.movementPanel = new MovementPanel();
+		this.movementPanel = new MovementPanel(game, this);
 		this.drainingPanel = new DrainingPanel();
 		this.inventoryPanel = new InventoryPanel();
 		this.artifactPanel = new ArtifactPanel();
@@ -104,10 +107,15 @@ class ActionsPanel extends JPanel {
 }
 
 class MovementPanel extends JPanel {
+	ForbiddenIsland game;
 	JButton[] buttons;
 
-	public MovementPanel() {
+	public MovementPanel(ForbiddenIsland game, ActionsPanel ap) {
 		this.setLayout(new GridLayout(3, 3));
+
+		this.game = game;
+
+		MovementController mc = new MovementController(game, ap);
 
 		this.buttons = new JButton[9];
 
@@ -123,7 +131,11 @@ class MovementPanel extends JPanel {
 
 		this.disableButtons();
 
-		for(JButton b : this.buttons) {this.add(b);}
+		for (int i=0; i<9; i++) {
+			this.add(this.buttons[i]);
+			this.buttons[i].addActionListener(mc);
+			this.buttons[i].setActionCommand(""+i);
+		}
 	}
 
 	public void disableButtons() {for(JButton b : this.buttons) {b.setEnabled(false);}}
@@ -269,25 +281,27 @@ class Controller implements ActionListener {
 
 class MovementController implements ActionListener {
 	ForbiddenIsland game;
-	CommandView cv;
+	ActionsPanel ap;
 
-	public MovementController(ForbiddenIsland game, CommandView cv) {
+	public MovementController(ForbiddenIsland game, ActionsPanel ap) {
 		this.game = game;
-		this.cv = cv;
+		this.ap = ap;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Same line copied from StackOverflow
 		Player curPlayer = this.game.getCurrentPlayer();
 
+		boolean didMove;
 		switch(actionCommand) {
-			case "1" -> curPlayer.movePlayer(0);
-			case "3" -> curPlayer.movePlayer(3);
-			case "5" -> curPlayer.movePlayer(1);
-			case "8" -> curPlayer.movePlayer(2);
+			case "1" -> didMove = curPlayer.movePlayer(0);
+			case "3" -> didMove = curPlayer.movePlayer(3);
+			case "5" -> didMove = curPlayer.movePlayer(1);
+			case "7" -> didMove = curPlayer.movePlayer(2);
+			default  -> didMove = false;
 		}
 
-		this.cv.actionsPanel.decrementRemainingActions();
+		if(didMove) {this.ap.decrementRemainingActions();}
 
 	}
 }
