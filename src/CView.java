@@ -53,6 +53,10 @@ class GridView extends JPanel implements Observer {
 		for(int n=0; n<36; n++) {
 			paintCell(g, game.getCell(n));
 		}
+
+		for(int i=0; i<4; i++) {
+			paintPlayer(g, game.getPlayers()[i], (game.getCurrentPlayerNumber() == i));
+		}
 	}
 
 	private void paintCell(Graphics g, Cell c) {
@@ -76,6 +80,13 @@ class GridView extends JPanel implements Observer {
 			g.fillRect((c.getX() * SIZE + (int) (SIZE * 0.2)), (c.getY() * SIZE + (int) (SIZE * 0.2)), (int) (SIZE * 0.6), (int) (SIZE * 0.6));
 
 		}
+	}
+
+	private void paintPlayer(Graphics g, Player p, boolean isCurrentPlayer) {
+		if(isCurrentPlayer) {g.setColor(new Color(0, 255, 0));}
+		else {g.setColor(new Color(0, 191, 0));}
+
+		g.fillRect(p.getCell().getX() * SIZE + (int)(SIZE*0.3), p.getCell().getY() * SIZE + (int)(SIZE*0.3), (int)(SIZE*0.4), (int)(SIZE*0.4));
 	}
 }
 

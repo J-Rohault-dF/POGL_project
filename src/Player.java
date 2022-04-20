@@ -13,6 +13,10 @@ public class Player {
 		this.artefacts = new ArrayList<>();
 	}
 
+	public String toString() {
+		return "<Player at "+(this.cell)+">";
+	}
+
 	public boolean movePlayer(int direction) {
 		//Check if available
 		Cell neighbor = this.cell.getNeighbor(direction);
@@ -24,4 +28,6 @@ public class Player {
 		this.cell = neighbor;
 		return true;
 	}
+
+	public Cell getCell() {return this.cell;}
 }

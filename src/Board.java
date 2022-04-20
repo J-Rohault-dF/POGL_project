@@ -49,7 +49,7 @@ public class Board {
 			(x == 4 && y == 5) || (x == 5 && y == 5) || (x == 5 && y == 4)
 		) {return new Cell(x, y, null);}
 
-		return this.cells[x+(6*x)];
+		return this.cells[x+(6*y)];
 	}
 
 	/**

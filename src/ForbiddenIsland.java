@@ -26,9 +26,10 @@ public class ForbiddenIsland extends Observable {
 		EventQueue.invokeLater(() -> {
 			ForbiddenIsland game = new ForbiddenIsland();
 			CView view = new CView(game);
+			int currentPlayer;
 
 			while (!game.isFinished) {
-				int currentPlayer = (game.currentPlayer + 1) % 4;
+				currentPlayer = (game.currentPlayer + 1) % 4;
 				view.getActionsPanel().startTurn(game.players[currentPlayer]);
 				game.notifyObservers();
 
@@ -43,13 +44,17 @@ public class ForbiddenIsland extends Observable {
 		});
 	}
 
-	//Functions relayed to the grid
+	//Functions relayed to the board
 	public Cell getCell(int x, int y) {return this.board.getCell(x, y);}
 	public Cell getCell(int n) {return this.board.getCell(n);}
 	public void floodRandomCells(int i) {this.board.floodRandomCells(i);}
 
 	public Board getBoard() {return this.board;}
 
+	//Functions about players
+	public Player[] getPlayers() {return this.players;}
 	public Player getCurrentPlayer() {return this.players[currentPlayer];}
+	public int getCurrentPlayerNumber() {return this.currentPlayer;}
+
 }
 
