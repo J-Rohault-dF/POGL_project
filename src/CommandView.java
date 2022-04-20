@@ -1,19 +1,30 @@
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 class CommandView extends JPanel {
 	private ForbiddenIsland game;
 	ActionsPanel actionsPanel;
+	FindKeyPanel findKeyPanel;
 
 	public CommandView(ForbiddenIsland game) {
+		this.setLayout(new BoxLayout(this, 1));
+
 		this.game = game;
-		JButton endRoundButton = new JButton("End round");
-		endRoundButton.setActionCommand("endRound");
-		this.add(endRoundButton);
 
 		actionsPanel = new ActionsPanel();
 		this.add(actionsPanel);
+
+		findKeyPanel = new FindKeyPanel();
+		this.add(findKeyPanel);
+
+		JButton endRoundButton = new JButton("End round");
+		endRoundButton.setActionCommand("endRound");
+		this.add(endRoundButton);
 
 		Controller ctrl = new Controller(game);
 		endRoundButton.addActionListener(ctrl);
@@ -32,6 +43,9 @@ class ActionsPanel extends JPanel {
 	JLabel label;
 
 	public ActionsPanel() {
+		this.setLayout(new BoxLayout(this, 1));
+		this.setBorder(new CompoundBorder(new LineBorder(Color.lightGray), new EmptyBorder(4, 4, 4, 4)));
+
 		this.remainingActions = 0;
 		this.label = new JLabel("No remaining actions");
 		this.add(label);
@@ -40,6 +54,24 @@ class ActionsPanel extends JPanel {
 		this.drainingPanel = new DrainingPanel();
 		this.inventoryPanel = new InventoryPanel();
 		this.artifactPanel = new ArtifactPanel();
+
+		this.add(new JLabel(" "));
+		this.add(new JLabel("Movement:"));
+		this.add(this.movementPanel);
+
+		this.add(new JLabel(" "));
+		this.add(new JLabel("Draining:"));
+		this.add(this.drainingPanel);
+
+		this.add(new JLabel(" "));
+		this.add(new JLabel("Inventory:"));
+		this.add(this.inventoryPanel);
+
+		this.add(new JLabel(" "));
+		this.add(new JLabel("Artifact:"));
+		this.add(this.artifactPanel);
+
+		this.enableButtons();
 	}
 
 	public void startTurn(Player player) {
@@ -48,9 +80,26 @@ class ActionsPanel extends JPanel {
 		this.label.setText("Remaining actions: "+this.remainingActions);
 	}
 
-	public void removeOneRemainingAction() {
+	public void decrementRemainingActions() {
 		this.remainingActions--;
 		this.label.setText("Remaining actions: "+this.remainingActions);
+
+		if(this.remainingActions == 0) {
+			this.label.setText("No remaining actions");
+			this.disableButtons();
+		}
+	}
+
+	protected void disableButtons() {
+		this.movementPanel.disableButtons();
+		this.drainingPanel.disableButtons();
+		this.artifactPanel.disableButtons();
+	}
+
+	protected void enableButtons() {
+		this.movementPanel.enableButtons(false); //TODO: Add to the player a “can move diagonally” property that is checked
+		this.drainingPanel.enableButtons(false);
+		this.artifactPanel.enableButtons();
 	}
 }
 
@@ -58,6 +107,8 @@ class MovementPanel extends JPanel {
 	JButton[] buttons;
 
 	public MovementPanel() {
+		this.setLayout(new GridLayout(3, 3));
+
 		this.buttons = new JButton[9];
 
 		this.buttons[0] = new JButton("↖");
@@ -95,6 +146,8 @@ class DrainingPanel extends JPanel {
 	JButton[] buttons;
 
 	public DrainingPanel() {
+		this.setLayout(new GridLayout(3, 3));
+
 		this.buttons = new JButton[9];
 
 		this.buttons[0] = new JButton(" ");
@@ -141,8 +194,9 @@ class InventoryPanel extends JPanel {
 	}
 
 	public void showInventory(String[] inventory) {
+		inventoryDisplayer.setText("");
 		for(String s : inventory) {
-			inventoryDisplayer.append(s);
+			inventoryDisplayer.append(s+"\n");
 		}
 	}
 
@@ -168,6 +222,9 @@ class FindKeyPanel extends JPanel {
 	JTextField feedbackText;
 
 	public FindKeyPanel() {
+		this.setLayout(new BoxLayout(this, 1));
+		this.setBorder(new CompoundBorder(new LineBorder(Color.lightGray), new EmptyBorder(4, 4, 4, 4)));
+
 		this.findKey = new JButton("Pick a key card");
 		this.feedbackText = new JTextField("");
 		this.feedbackText.setEnabled(false);
@@ -198,9 +255,7 @@ class EndTurnPanel extends JPanel {
 class Controller implements ActionListener {
 	ForbiddenIsland game;
 
-	public Controller(ForbiddenIsland game) {
-		this.game = game;
-	}
+	public Controller(ForbiddenIsland game) {this.game = game;}
 
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Line copied from StackOverflow
@@ -208,6 +263,31 @@ class Controller implements ActionListener {
 		switch (actionCommand) {
 			case "endRound" -> game.floodRandomCells(3);
 		}
+
+	}
+}
+
+class MovementController implements ActionListener {
+	ForbiddenIsland game;
+	CommandView cv;
+
+	public MovementController(ForbiddenIsland game, CommandView cv) {
+		this.game = game;
+		this.cv = cv;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Same line copied from StackOverflow
+		Player curPlayer = this.game.getCurrentPlayer();
+
+		switch(actionCommand) {
+			case "1" -> curPlayer.movePlayer(0);
+			case "3" -> curPlayer.movePlayer(3);
+			case "5" -> curPlayer.movePlayer(1);
+			case "8" -> curPlayer.movePlayer(2);
+		}
+
+		this.cv.actionsPanel.decrementRemainingActions();
 
 	}
 }

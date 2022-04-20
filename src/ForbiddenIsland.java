@@ -49,5 +49,7 @@ public class ForbiddenIsland extends Observable {
 	public void floodRandomCells(int i) {this.board.floodRandomCells(i);}
 
 	public Board getBoard() {return this.board;}
+
+	public Player getCurrentPlayer() {return this.players[currentPlayer];}
 }
 
