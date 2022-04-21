@@ -147,17 +147,18 @@ class MovementPanel extends JPanel {
 	}
 
 	public void disableButtons() {for(JButton b : this.buttons) {b.setEnabled(false);}}
-	public void enableButtons(boolean isDiagonal) { //TODO: Only enable buttons for which the tile exists
-		this.buttons[1].setEnabled(true);
-		this.buttons[3].setEnabled(true);
-		this.buttons[5].setEnabled(true);
-		this.buttons[7].setEnabled(true);
+	public void enableButtons(boolean isDiagonal) {
+		this.disableButtons(); //Disable all buttons before re-enabling some of them
+		Player curPlayer = game.getCurrentPlayer();
 
-		if(isDiagonal) {
-			this.buttons[0].setEnabled(true);
-			this.buttons[2].setEnabled(true);
-			this.buttons[6].setEnabled(true);
-			this.buttons[8].setEnabled(true);
+		for(int i=0; i<9; i++) {
+			Tile t = curPlayer.getCell().getNeighbor(i).getTile();
+			if(!(isDiagonal || (i == 0 || i == 2 || i == 6 || i == 8)) && (i != 4)) { //Checks for diagonals, then removes the middle cell (can't move in-place)
+
+				if(t != null) {
+					this.buttons[i].setEnabled(true);
+				}
+			}
 		}
 	}
 }
@@ -206,13 +207,6 @@ class DrainingPanel extends JPanel {
 					this.buttons[i].setEnabled(true);
 				}
 			}
-		}
-
-		if(isDiagonal) {
-			this.buttons[0].setEnabled(true);
-			this.buttons[2].setEnabled(true);
-			this.buttons[6].setEnabled(true);
-			this.buttons[8].setEnabled(true);
 		}
 	}
 }
@@ -319,14 +313,9 @@ class MovementController implements ActionListener {
 
 		int ac = Integer.parseInt(((JButton) e.getSource()).getActionCommand()); //Same code from StackOverflow in this line
 
-		boolean didMove;
-		if(ac == 1 || ac == 3 || ac == 5 || ac == 7) { //Only if they are direct neighbors - Hardcoded since diagonal moves aren't implemented yet, if it were it would instead check if curPlayer has the ability to move diagonally (like curPlayer.getPlayerType().canMoveDiagonally())
-			didMove = curPlayer.movePlayer(ac);
-		} else {
-			didMove = false;
-		}
+		boolean didMove = curPlayer.movePlayer(ac);
 
-		if(didMove) {this.ap.decrementRemainingActions();}
+		if(didMove){this.ap.decrementRemainingActions();}
 
 	}
 }
