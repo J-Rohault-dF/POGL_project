@@ -10,6 +10,7 @@ public class Board {
 
 		//Makes the deck of tiles
 		ArrayList<Tile> tilesDeck = new ArrayList<>();
+		tilesDeck.add(new Tile("Fools' Landing", null));
 		tilesDeck.add(new Tile("Cave of Embers", TreasureType.ArdentCristal));
 		tilesDeck.add(new Tile("Cave of Shadows", TreasureType.ArdentCristal));
 		tilesDeck.add(new Tile("Temple of the Moon", TreasureType.SacredStone));
@@ -24,7 +25,6 @@ public class Board {
 		tilesDeck.add(new Tile("Cliffs of Abandon", null));
 		tilesDeck.add(new Tile("Crimson Forest", null));
 		tilesDeck.add(new Tile("Dunes of Deception", null));
-		tilesDeck.add(new Tile("Fools' Landing", null));
 		tilesDeck.add(new Tile("Gold Gate", null));
 		tilesDeck.add(new Tile("Iron Gate", null));
 		tilesDeck.add(new Tile("Lost Lagoon", null));

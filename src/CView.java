@@ -6,7 +6,6 @@ import javax.swing.*;
 ENTIRE CODE COPIED FROM CONWAY.JAVA
  */
 
-@SuppressWarnings("FieldCanBeLocal")
 public class CView {
 	private JFrame frame;
 	private GridView grid;
@@ -65,20 +64,36 @@ class GridView extends JPanel implements Observer {
 		g.setColor(new Color(238, 238, 238));
 		g.fillRect((c.getX() * SIZE), (c.getY() * SIZE), SIZE, SIZE); //Hide previous board
 
-		//System.out.println(""+c+" "+c.getTile()+" "+t+" "+t.getStatus()+" "+(t.getStatus() == Status.Submerged)+" "+(t != null && t.getStatus() != Status.Submerged));
 		if(t != null) { //If the cell is null, it is outside the board and thus not showed
 
 			//System.out.println(""+(t != null && t.getStatus() != Status.Submerged));
 
-			g.setColor(((c.getX() + c.getY()) % 2 == 0) ? Color.GRAY : Color.RED); //Grid pattern
+			g.setColor(Color.GRAY);
 			g.fillRect((c.getX() * SIZE + (int) (SIZE * 0.05)), (c.getY() * SIZE + (int) (SIZE * 0.05)), (int) (SIZE * 0.9), (int) (SIZE * 0.9));
 
 			//Dryness overlay
 			if (t.isFlooded()) {g.setColor(new Color(0, 0, 255, 85));}
-			else                {g.setColor(new Color(0, 0, 255, 0));}
+			else               {g.setColor(new Color(0, 0, 255, 0));}
 
+			//Drew rectangle
 			g.fillRect((c.getX() * SIZE + (int) (SIZE * 0.2)), (c.getY() * SIZE + (int) (SIZE * 0.2)), (int) (SIZE * 0.6), (int) (SIZE * 0.6));
 
+			//Draw the artifacts areas
+			if(t.getTreasureType() != null) {
+				switch (t.getTreasureType()) {
+					case ArdentCristal -> g.setColor(Color.red);
+					case SacredStone -> g.setColor(Color.black);
+					case WaveChalice -> g.setColor(Color.blue);
+					case ZephyrStatue -> g.setColor(Color.yellow);
+				}
+				g.fillOval(c.getX() * SIZE + (int) (SIZE * 0.10), c.getY() * SIZE + (int) (SIZE * 0.60), (int) (SIZE * 0.30), (int) (SIZE * 0.30));
+			}
+
+			//Draw the helicopter tile
+			if(t.getName() == "Fools' Landing") {
+				g.setColor(Color.lightGray);
+				g.fillOval((c.getX() * SIZE + (int) (SIZE * 0.2)), (c.getY() * SIZE + (int) (SIZE * 0.2)), (int) (SIZE * 0.6), (int) (SIZE * 0.6));
+			}
 		}
 	}
 
