@@ -54,7 +54,7 @@ class ActionsPanel extends JPanel {
 		this.add(label);
 
 		this.movementPanel = new MovementPanel(game, this);
-		this.drainingPanel = new DrainingPanel();
+		this.drainingPanel = new DrainingPanel(game, this);
 		this.inventoryPanel = new InventoryPanel();
 		this.artifactPanel = new ArtifactPanel();
 
@@ -114,7 +114,6 @@ class MovementPanel extends JPanel {
 		this.setLayout(new GridLayout(3, 3));
 
 		this.game = game;
-
 		MovementController mc = new MovementController(game, ap);
 
 		this.buttons = new JButton[9];
@@ -155,10 +154,14 @@ class MovementPanel extends JPanel {
 }
 
 class DrainingPanel extends JPanel {
+	ForbiddenIsland game;
 	JButton[] buttons;
 
-	public DrainingPanel() {
+	public DrainingPanel(ForbiddenIsland game, ActionsPanel ap) {
 		this.setLayout(new GridLayout(3, 3));
+
+		this.game = game;
+		DrainingController dc = new DrainingController(game, ap);
 
 		this.buttons = new JButton[9];
 
@@ -174,7 +177,11 @@ class DrainingPanel extends JPanel {
 
 		this.disableButtons();
 
-		for(JButton b : this.buttons) {this.add(b);}
+		for (int i=0; i<9; i++) {
+			this.add(this.buttons[i]);
+			this.buttons[i].addActionListener(dc);
+			this.buttons[i].setActionCommand(""+i);
+		}
 	}
 
 	public void disableButtons() {for(JButton b : this.buttons) {b.setEnabled(false);}}
@@ -302,6 +309,38 @@ class MovementController implements ActionListener {
 		}
 
 		if(didMove) {this.ap.decrementRemainingActions();}
+
+	}
+}
+
+class DrainingController implements ActionListener {
+	ForbiddenIsland game;
+	ActionsPanel ap;
+
+	public DrainingController(ForbiddenIsland game, ActionsPanel ap) {
+		this.game = game;
+		this.ap = ap;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Same line copied from StackOverflow
+		Player curPlayer = this.game.getCurrentPlayer();
+
+		Tile t;
+		switch(actionCommand) { //Chooses the targeted cell depending on the direction
+			case "1" -> t = curPlayer.getCell().getNeighbor(0).getTile();
+			case "3" -> t = curPlayer.getCell().getNeighbor(3).getTile();
+			case "4" -> t = curPlayer.getCell().getTile();
+			case "5" -> t = curPlayer.getCell().getNeighbor(1).getTile();
+			case "7" -> t = curPlayer.getCell().getNeighbor(2).getTile();
+			default  -> t = null;
+		}
+
+		boolean didDry; //Attempts drying the tile, didDry checks if it happened
+		if(t == null) {didDry = false;}
+		else {didDry = t.dry();}
+
+		if(didDry) {this.ap.decrementRemainingActions();}
 
 	}
 }

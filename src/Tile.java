@@ -21,4 +21,12 @@ public class Tile {
 		if(!this.isFlooded) {this.isFlooded = true;}
 		else {this.cell.setTile(null);}
 	}
+
+	public boolean dry() {
+		if(this.isFlooded) {
+			this.isFlooded = false;
+			return true;
+		}
+		else {return false;}
+	}
 }
