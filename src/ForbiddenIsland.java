@@ -57,7 +57,7 @@ public class ForbiddenIsland extends Observable {
 	public int getCurrentPlayerNumber() {return this.currentPlayer;}
 
 	public Player nextPlayer() {
-		int curPlayer = (this.currentPlayer + 1) % 4;
+		this.currentPlayer = (this.currentPlayer + 1) % 4;
 		return this.players[currentPlayer];
 	}
 

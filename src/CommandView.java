@@ -7,14 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 class CommandView extends JPanel {
-	private ForbiddenIsland game;
 	ActionsPanel actionsPanel;
 	FindKeyPanel findKeyPanel;
+	EndTurnPanel endTurnPanel;
 
 	public CommandView(ForbiddenIsland game) {
 		this.setLayout(new BoxLayout(this, 1));
-
-		this.game = game;
 
 		actionsPanel = new ActionsPanel(game);
 		this.add(actionsPanel);
@@ -22,12 +20,8 @@ class CommandView extends JPanel {
 		findKeyPanel = new FindKeyPanel();
 		this.add(findKeyPanel);
 
-		JButton endRoundButton = new JButton("End round");
-		endRoundButton.setActionCommand("endRound");
-		this.add(endRoundButton);
-
-		Controller ctrl = new Controller(game, actionsPanel);
-		endRoundButton.addActionListener(ctrl);
+		endTurnPanel = new EndTurnPanel(game, actionsPanel);
+		this.add(endTurnPanel);
 	}
 
 	public ActionsPanel getActionsPanel() {return actionsPanel;}
@@ -270,9 +264,14 @@ class FindKeyPanel extends JPanel {
 class EndTurnPanel extends JPanel {
 	JButton endTurn;
 
-	public EndTurnPanel() {
+	public EndTurnPanel(ForbiddenIsland game, ActionsPanel ap) {
 		this.endTurn = new JButton("End turn");
-		this.endTurn.setEnabled(false);
+		this.endTurn.setEnabled(true);
+
+		endTurn.setActionCommand("endRound");
+
+		Controller ctrl = new Controller(game, ap);
+		endTurn.addActionListener(ctrl);
 
 		this.add(endTurn);
 	}
