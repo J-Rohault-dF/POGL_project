@@ -4,9 +4,10 @@ public class Tile {
 	private TreasureType treasure;
 	private boolean isFlooded;
 
-	public Tile(Cell cell) {
+	public Tile(String name, TreasureType treasure) {
+		this.name = name;
+		this.treasure = treasure;
 		this.isFlooded = false;
-		this.cell = cell;
 	}
 
 	//Getters
@@ -29,4 +30,6 @@ public class Tile {
 		}
 		else {return false;}
 	}
+
+	public void setCell(Cell cell) {this.cell = cell;}
 }

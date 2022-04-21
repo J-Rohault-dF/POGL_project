@@ -25,5 +25,8 @@ public class Cell {
 	public void setNeighbor(Cell neighbor, int direction) {this.neighbors[direction] = neighbor;}
 	public Cell getNeighbor(int direction) {return this.neighbors[direction];}
 
-	public void setTile(Tile tile) {this.tile = tile;}
+	public void setTile(Tile tile) {
+		this.tile = tile;
+		if(tile != null) {tile.setCell(this);}
+	}
 }
