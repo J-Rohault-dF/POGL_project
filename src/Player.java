@@ -30,4 +30,5 @@ public class Player {
 	}
 
 	public Cell getCell() {return this.cell;}
+
 }

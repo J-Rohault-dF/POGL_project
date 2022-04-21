@@ -9,7 +9,7 @@ public class Cell {
 		this.x = x;
 		this.y = y;
 		this.tile = tile;
-		this.neighbors = new Cell[4];
+		this.neighbors = new Cell[9];
 	}
 
 	//Getters

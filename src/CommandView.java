@@ -87,6 +87,10 @@ class ActionsPanel extends JPanel {
 		this.remainingActions--;
 		this.label.setText("Remaining actions: "+this.remainingActions);
 
+		//Check buttons again
+		this.movementPanel.enableButtons(false);
+		this.drainingPanel.enableButtons(false, game);
+
 		if(this.remainingActions == 0) {
 			this.label.setText("No remaining actions");
 			this.disableButtons();
@@ -101,7 +105,7 @@ class ActionsPanel extends JPanel {
 
 	protected void enableButtons() {
 		this.movementPanel.enableButtons(false); //TODO: Add to the player a “can move diagonally” property that is checked
-		this.drainingPanel.enableButtons(false);
+		this.drainingPanel.enableButtons(false, game);
 		this.artifactPanel.enableButtons();
 	}
 }
@@ -175,7 +179,7 @@ class DrainingPanel extends JPanel {
 		this.buttons[7] = new JButton("•");
 		this.buttons[8] = new JButton(" ");
 
-		this.disableButtons();
+		this.enableButtons(false, this.game);
 
 		for (int i=0; i<9; i++) {
 			this.add(this.buttons[i]);
@@ -185,12 +189,19 @@ class DrainingPanel extends JPanel {
 	}
 
 	public void disableButtons() {for(JButton b : this.buttons) {b.setEnabled(false);}}
-	public void enableButtons(boolean isDiagonal) {
-		this.buttons[1].setEnabled(true);
-		this.buttons[3].setEnabled(true);
-		this.buttons[4].setEnabled(true);
-		this.buttons[5].setEnabled(true);
-		this.buttons[7].setEnabled(true);
+	public void enableButtons(boolean isDiagonal, ForbiddenIsland game) {
+		this.disableButtons(); //Disable all buttons before re-enabling some of them
+		Player curPlayer = game.getCurrentPlayer();
+
+		for(int i=0; i<9; i++) {
+			Tile t = curPlayer.getCell().getNeighbor(i).getTile();
+			if(!(isDiagonal || (i == 0 || i == 2 || i == 6 || i == 8))) { //Would add a check for isDiagonal, but it doesn't need to be implemented just yet
+
+				if(t != null && t.isFlooded()) {
+					this.buttons[i].setEnabled(true);
+				}
+			}
+		}
 
 		if(isDiagonal) {
 			this.buttons[0].setEnabled(true);
@@ -301,10 +312,10 @@ class MovementController implements ActionListener {
 
 		boolean didMove;
 		switch(actionCommand) {
-			case "1" -> didMove = curPlayer.movePlayer(0);
+			case "1" -> didMove = curPlayer.movePlayer(1); //TODO: Simplify this code (no need for a switch statement anymore)
 			case "3" -> didMove = curPlayer.movePlayer(3);
-			case "5" -> didMove = curPlayer.movePlayer(1);
-			case "7" -> didMove = curPlayer.movePlayer(2);
+			case "5" -> didMove = curPlayer.movePlayer(5);
+			case "7" -> didMove = curPlayer.movePlayer(7);
 			default  -> didMove = false;
 		}
 
@@ -328,11 +339,11 @@ class DrainingController implements ActionListener {
 
 		Tile t;
 		switch(actionCommand) { //Chooses the targeted cell depending on the direction
-			case "1" -> t = curPlayer.getCell().getNeighbor(0).getTile();
+			case "1" -> t = curPlayer.getCell().getNeighbor(1).getTile();
 			case "3" -> t = curPlayer.getCell().getNeighbor(3).getTile();
-			case "4" -> t = curPlayer.getCell().getTile();
-			case "5" -> t = curPlayer.getCell().getNeighbor(1).getTile();
-			case "7" -> t = curPlayer.getCell().getNeighbor(2).getTile();
+			case "4" -> t = curPlayer.getCell().getNeighbor(4).getTile(); //TODO: Simplify code (no need for a switch anymore)
+			case "5" -> t = curPlayer.getCell().getNeighbor(5).getTile();
+			case "7" -> t = curPlayer.getCell().getNeighbor(7).getTile();
 			default  -> t = null;
 		}
 

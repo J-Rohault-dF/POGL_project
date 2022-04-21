@@ -28,10 +28,16 @@ public class Board {
 		for(int i=0; i<36; i++) { //Gives each cell its neighbors
 			Cell c = this.cells[i];
 
-			c.setNeighbor(this.getCell(c.getX(), c.getY()-1), 0);
-			c.setNeighbor(this.getCell(c.getX()+1, c.getY()), 1);
-			c.setNeighbor(this.getCell(c.getX(), c.getY()+1), 2);
-			c.setNeighbor(this.getCell(c.getX()-1, c.getY()), 3);
+			//Sets the 3x3 grid around (including itself for consistency) as its neighbors
+			c.setNeighbor(this.getCell(c.getX()-1, c.getY()-1), 0);
+			c.setNeighbor(this.getCell(c.getX()+0, c.getY()-1), 1);
+			c.setNeighbor(this.getCell(c.getX()+1, c.getY()-1), 2);
+			c.setNeighbor(this.getCell(c.getX()-1, c.getY()+0), 3);
+			c.setNeighbor(this.getCell(c.getX()+0, c.getY()+0), 4);
+			c.setNeighbor(this.getCell(c.getX()+1, c.getY()+0), 5);
+			c.setNeighbor(this.getCell(c.getX()-1, c.getY()+1), 6);
+			c.setNeighbor(this.getCell(c.getX()+0, c.getY()+1), 7);
+			c.setNeighbor(this.getCell(c.getX()+1, c.getY()+1), 8);
 		}
 	}
 
