@@ -92,9 +92,12 @@ public class Board {
 			if(pickedCell.getTile() != null) { //If the cell can be inundated: inundate it
 				pickedCell.getTile().flood();
 				i--;
-			} else { //If it can't (already submerged), remove it from the list of cells that can be, and find another one
-				nonSubmergedCells.remove(pickedIndex);
 			}
+
+			//If it can't (already submerged) or once it was submerged, remove it from the list of cells that can be, and find another one
+			nonSubmergedCells.remove(pickedIndex);
+
+			//TODO: If it makes a cell submerged, check if a player is on it, and if it is then make them do an emergency move
 
 			if(nonSubmergedCells.size() == 0) {break;} //If no cell can be submerged, nothing is done
 		}
