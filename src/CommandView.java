@@ -26,7 +26,7 @@ class CommandView extends JPanel {
 		endRoundButton.setActionCommand("endRound");
 		this.add(endRoundButton);
 
-		Controller ctrl = new Controller(game);
+		Controller ctrl = new Controller(game, actionsPanel);
 		endRoundButton.addActionListener(ctrl);
 	}
 
@@ -77,24 +77,29 @@ class ActionsPanel extends JPanel {
 		this.enableButtons();
 	}
 
-	public void startTurn(Player player) {
-		this.currentPlayer = player;
+	public void startTurn() {
+		this.currentPlayer = this.game.nextPlayer();
 		this.remainingActions = 3;
 		this.label.setText("Remaining actions: "+this.remainingActions);
+
+		this.resetButtons();
 	}
 
 	public void decrementRemainingActions() {
 		this.remainingActions--;
 		this.label.setText("Remaining actions: "+this.remainingActions);
 
-		//Check buttons again
-		this.movementPanel.enableButtons(false);
-		this.drainingPanel.enableButtons(false, game);
+		this.resetButtons();
 
 		if(this.remainingActions == 0) {
 			this.label.setText("No remaining actions");
 			this.disableButtons();
 		}
+	}
+
+	public void resetButtons() {
+		this.movementPanel.enableButtons(false);
+		this.drainingPanel.enableButtons(false, game);
 	}
 
 	protected void disableButtons() {
@@ -284,15 +289,18 @@ class EndTurnPanel extends JPanel {
 
 class Controller implements ActionListener {
 	ForbiddenIsland game;
+	ActionsPanel ap;
 
-	public Controller(ForbiddenIsland game) {this.game = game;}
+	public Controller(ForbiddenIsland game, ActionsPanel ap) {
+		this.game = game;
+		this.ap = ap;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Line copied from StackOverflow
 
-		switch (actionCommand) {
-			case "endRound" -> game.floodRandomCells(3);
-		}
+		game.floodRandomCells(3);
+		ap.startTurn();
 
 	}
 }
@@ -307,16 +315,15 @@ class MovementController implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Same line copied from StackOverflow
 		Player curPlayer = this.game.getCurrentPlayer();
 
+		int ac = Integer.parseInt(((JButton) e.getSource()).getActionCommand()); //Same code from StackOverflow in this line
+
 		boolean didMove;
-		switch(actionCommand) {
-			case "1" -> didMove = curPlayer.movePlayer(1); //TODO: Simplify this code (no need for a switch statement anymore)
-			case "3" -> didMove = curPlayer.movePlayer(3);
-			case "5" -> didMove = curPlayer.movePlayer(5);
-			case "7" -> didMove = curPlayer.movePlayer(7);
-			default  -> didMove = false;
+		if(ac == 1 || ac == 3 || ac == 5 || ac == 7) { //Only if they are direct neighbors - Hardcoded since diagonal moves aren't implemented yet, if it were it would instead check if curPlayer has the ability to move diagonally (like curPlayer.getPlayerType().canMoveDiagonally())
+			didMove = curPlayer.movePlayer(ac);
+		} else {
+			didMove = false;
 		}
 
 		if(didMove) {this.ap.decrementRemainingActions();}
@@ -334,18 +341,10 @@ class DrainingController implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Same line copied from StackOverflow
+		int ac = Integer.parseInt(((JButton) e.getSource()).getActionCommand()); //Same line copied from StackOverflow
 		Player curPlayer = this.game.getCurrentPlayer();
 
-		Tile t;
-		switch(actionCommand) { //Chooses the targeted cell depending on the direction
-			case "1" -> t = curPlayer.getCell().getNeighbor(1).getTile();
-			case "3" -> t = curPlayer.getCell().getNeighbor(3).getTile();
-			case "4" -> t = curPlayer.getCell().getNeighbor(4).getTile(); //TODO: Simplify code (no need for a switch anymore)
-			case "5" -> t = curPlayer.getCell().getNeighbor(5).getTile();
-			case "7" -> t = curPlayer.getCell().getNeighbor(7).getTile();
-			default  -> t = null;
-		}
+		Tile t = curPlayer.getCell().getNeighbor(ac).getTile();
 
 		boolean didDry; //Attempts drying the tile, didDry checks if it happened
 		if(t == null) {didDry = false;}

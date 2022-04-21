@@ -29,8 +29,8 @@ public class ForbiddenIsland extends Observable {
 			int currentPlayer;
 
 			while (!game.isFinished) {
-				currentPlayer = (game.currentPlayer + 1) % 4;
-				view.getActionsPanel().startTurn(game.players[currentPlayer]);
+
+				view.getActionsPanel().startTurn();
 				game.notifyObservers();
 
 				//STEP ONE
@@ -55,6 +55,11 @@ public class ForbiddenIsland extends Observable {
 	public Player[] getPlayers() {return this.players;}
 	public Player getCurrentPlayer() {return this.players[currentPlayer];}
 	public int getCurrentPlayerNumber() {return this.currentPlayer;}
+
+	public Player nextPlayer() {
+		int curPlayer = (this.currentPlayer + 1) % 4;
+		return this.players[currentPlayer];
+	}
 
 }
 
