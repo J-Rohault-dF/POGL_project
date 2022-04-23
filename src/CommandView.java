@@ -12,6 +12,8 @@ class CommandView extends JPanel {
 	EndTurnPanel endTurnPanel;
 
 	public CommandView(ForbiddenIsland game) {
+		this.setPreferredSize(new Dimension(256, 480));
+
 		this.setLayout(new BoxLayout(this, 1));
 
 		actionsPanel = new ActionsPanel(game, this);
@@ -244,21 +246,19 @@ class ArtifactPanel extends JPanel {
 
 class FindKeyPanel extends JPanel {
 	JButton findKey;
-	JTextField feedbackText;
+	JLabel feedbackText;
 	int cardsToPick;
 
 	public FindKeyPanel(ForbiddenIsland game) {
 		this.setLayout(new BoxLayout(this, 1));
 		this.setBorder(new CompoundBorder(new LineBorder(Color.lightGray), new EmptyBorder(4, 4, 4, 4)));
 
-		this.findKey = new JButton("Pick a key card");
+		this.findKey = new JButton("Draw a card");
 
 		DrawKeyController c = new DrawKeyController(game, this);
 		this.findKey.addActionListener(c);
 
-		this.feedbackText = new JTextField("");
-		this.feedbackText.setEnabled(false);
-		this.feedbackText.setEditable(false);
+		this.feedbackText = new JLabel(" ");
 
 		this.add(findKey);
 		this.add(feedbackText);
@@ -269,6 +269,7 @@ class FindKeyPanel extends JPanel {
 	public void enableButtons()  {
 		this.findKey.setEnabled(true);
 		this.cardsToPick = 2;
+		this.feedbackText.setText(" ");
 	}
 	public void disableButtons() {this.findKey.setEnabled(false);}
 	public void decrement() {
