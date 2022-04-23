@@ -8,8 +8,7 @@ import java.awt.event.ActionListener;
 
 class CommandView extends JPanel {
 	ActionsPanel actionsPanel;
-	FindKeyPanel findKeyPanel;
-	EndTurnPanel endTurnPanel;
+	DrawAndEndTurnPanel drawAndEndTurnPanel;
 
 	public CommandView(ForbiddenIsland game) {
 		this.setPreferredSize(new Dimension(256, 480));
@@ -19,11 +18,8 @@ class CommandView extends JPanel {
 		actionsPanel = new ActionsPanel(game, this);
 		this.add(actionsPanel);
 
-		findKeyPanel = new FindKeyPanel(game); //Only enable if it's possible to get a key
-		this.add(findKeyPanel);
-
-		endTurnPanel = new EndTurnPanel(game, actionsPanel);
-		this.add(endTurnPanel);
+		drawAndEndTurnPanel = new DrawAndEndTurnPanel(game, this); //Only enable if it's possible to get a key
+		this.add(drawAndEndTurnPanel);
 	}
 
 	public ActionsPanel getActionsPanel() {return actionsPanel;}
@@ -99,7 +95,7 @@ class ActionsPanel extends JPanel {
 	public void resetButtons() {
 		this.movementPanel.enableButtons(false);
 		this.drainingPanel.enableButtons(false, game);
-		this.cv.findKeyPanel.enableButtons();
+		this.cv.drawAndEndTurnPanel.enableButtons();
 	}
 
 	protected void disableButtons() {
@@ -244,78 +240,48 @@ class ArtifactPanel extends JPanel {
 	public void enableButtons()  {this.takeArtifact.setEnabled(true) ;}
 }
 
-class FindKeyPanel extends JPanel {
-	JButton findKey;
+class DrawAndEndTurnPanel extends JPanel {
+	CommandView cv;
+	JButton drawButton;
 	JLabel feedbackText;
 	int cardsToPick;
 
-	public FindKeyPanel(ForbiddenIsland game) {
+	public DrawAndEndTurnPanel(ForbiddenIsland game, CommandView cv) {
 		this.setLayout(new BoxLayout(this, 1));
 		this.setBorder(new CompoundBorder(new LineBorder(Color.lightGray), new EmptyBorder(4, 4, 4, 4)));
 
-		this.findKey = new JButton("Draw a card");
+		this.drawButton = new JButton("Draw a card & finish");
 
-		DrawKeyController c = new DrawKeyController(game, this);
-		this.findKey.addActionListener(c);
+		this.cv = cv;
+
+		DrawAndEndTurnController c = new DrawAndEndTurnController(game, this);
+		this.drawButton.addActionListener(c);
 
 		this.feedbackText = new JLabel(" ");
 
-		this.add(findKey);
+		this.add(drawButton);
 		this.add(feedbackText);
 
 		this.enableButtons();
 	}
 
 	public void enableButtons()  {
-		this.findKey.setEnabled(true);
+		this.drawButton.setEnabled(true);
+		this.drawButton.setText("Draw a card & finish");
 		this.cardsToPick = 2;
 		this.feedbackText.setText(" ");
 	}
-	public void disableButtons() {this.findKey.setEnabled(false);}
+	public void disableButtons() {this.drawButton.setEnabled(false);}
 	public void decrement() {
 		this.cardsToPick--;
-		if(this.cardsToPick <= 0) {this.disableButtons();}
+
+		if(this.cardsToPick <= 0) {
+			this.drawButton.setText("End your turn");
+		}
 	}
 
 	public void showPick(Card drawn) {
 		this.feedbackText.setText("Picked "+drawn.getText());
-	}
-}
-
-class EndTurnPanel extends JPanel {
-	JButton endTurn;
-
-	public EndTurnPanel(ForbiddenIsland game, ActionsPanel ap) {
-		this.endTurn = new JButton("End turn");
-		this.endTurn.setEnabled(true);
-
-		endTurn.setActionCommand("endRound");
-
-		Controller ctrl = new Controller(game, ap);
-		endTurn.addActionListener(ctrl);
-
-		this.add(endTurn);
-	}
-
-	public void enableButtons()  {this.endTurn.setEnabled(true) ;}
-	public void disableButtons() {this.endTurn.setEnabled(false);}
-}
-
-class Controller implements ActionListener {
-	ForbiddenIsland game;
-	ActionsPanel ap;
-
-	public Controller(ForbiddenIsland game, ActionsPanel ap) {
-		this.game = game;
-		this.ap = ap;
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		String actionCommand = ((JButton) e.getSource()).getActionCommand(); //Line copied from StackOverflow
-
-		game.floodRandomCells(3);
-		ap.startTurn();
-
 	}
 }
 
@@ -364,20 +330,26 @@ class DrainingController implements ActionListener {
 	}
 }
 
-class DrawKeyController implements ActionListener {
+class DrawAndEndTurnController implements ActionListener {
 	ForbiddenIsland game;
-	FindKeyPanel fkp;
+	DrawAndEndTurnPanel fkp;
 
-	public DrawKeyController(ForbiddenIsland game, FindKeyPanel fkp) {
+	public DrawAndEndTurnController(ForbiddenIsland game, DrawAndEndTurnPanel fkp) {
 		this.game = game;
 		this.fkp = fkp;
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		fkp.cv.actionsPanel.disableButtons();
 		fkp.decrement();
 
 		Card drawn = game.getDeck().draw(); //Draws the card
 		game.getCurrentPlayer().giveCard(drawn);
 		fkp.showPick(drawn);
+
+		if(fkp.cardsToPick < 0) {
+			game.floodRandomCells(3);
+			fkp.cv.actionsPanel.startTurn();
+		}
 	}
 }
