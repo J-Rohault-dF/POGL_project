@@ -4,12 +4,14 @@ import java.util.ArrayList;
 public class ForbiddenIsland extends Observable {
 	private Board board;
 	private Player[] players;
+	private Deck deck;
 	private boolean isFinished;
 	private int currentPlayer;
 
 	ForbiddenIsland() {
 		this.board = new Board();
 		this.players = new Player[4];
+		this.deck = new Deck();
 
 		this.players[0] = new Player(this.board, this.board.getCell(2, 2)); //TODO: Put actual starting positions
 		this.players[1] = new Player(this.board, this.board.getCell(2, 3));
@@ -61,5 +63,6 @@ public class ForbiddenIsland extends Observable {
 		return this.players[currentPlayer];
 	}
 
+	public Deck getDeck() {return this.deck;}
 }
 

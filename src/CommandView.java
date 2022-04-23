@@ -14,10 +14,10 @@ class CommandView extends JPanel {
 	public CommandView(ForbiddenIsland game) {
 		this.setLayout(new BoxLayout(this, 1));
 
-		actionsPanel = new ActionsPanel(game);
+		actionsPanel = new ActionsPanel(game, this);
 		this.add(actionsPanel);
 
-		findKeyPanel = new FindKeyPanel();
+		findKeyPanel = new FindKeyPanel(game); //Only enable if it's possible to get a key
 		this.add(findKeyPanel);
 
 		endTurnPanel = new EndTurnPanel(game, actionsPanel);
@@ -37,11 +37,14 @@ class ActionsPanel extends JPanel {
 	Player currentPlayer;
 	JLabel label;
 
-	public ActionsPanel(ForbiddenIsland game) {
+	CommandView cv;
+
+	public ActionsPanel(ForbiddenIsland game, CommandView cv) {
 		this.setLayout(new BoxLayout(this, 1));
 		this.setBorder(new CompoundBorder(new LineBorder(Color.lightGray), new EmptyBorder(4, 4, 4, 4)));
 
 		this.game = game;
+		this.cv = cv;
 
 		this.remainingActions = 0;
 		this.label = new JLabel("No remaining actions");
@@ -94,6 +97,7 @@ class ActionsPanel extends JPanel {
 	public void resetButtons() {
 		this.movementPanel.enableButtons(false);
 		this.drainingPanel.enableButtons(false, game);
+		this.cv.findKeyPanel.enableButtons();
 	}
 
 	protected void disableButtons() {
@@ -222,8 +226,6 @@ class InventoryPanel extends JPanel {
 			inventoryDisplayer.append(s+"\n");
 		}
 	}
-
-	public void hideInventory() {this.inventoryDisplayer.setText("");}
 }
 
 class ArtifactPanel extends JPanel {
@@ -243,22 +245,40 @@ class ArtifactPanel extends JPanel {
 class FindKeyPanel extends JPanel {
 	JButton findKey;
 	JTextField feedbackText;
+	int cardsToPick;
 
-	public FindKeyPanel() {
+	public FindKeyPanel(ForbiddenIsland game) {
 		this.setLayout(new BoxLayout(this, 1));
 		this.setBorder(new CompoundBorder(new LineBorder(Color.lightGray), new EmptyBorder(4, 4, 4, 4)));
 
 		this.findKey = new JButton("Pick a key card");
+
+		DrawKeyController c = new DrawKeyController(game, this);
+		this.findKey.addActionListener(c);
+
 		this.feedbackText = new JTextField("");
 		this.feedbackText.setEnabled(false);
 		this.feedbackText.setEditable(false);
 
 		this.add(findKey);
 		this.add(feedbackText);
+
+		this.enableButtons();
 	}
 
-	public void enableButtons()  {this.findKey.setEnabled(true) ;}
+	public void enableButtons()  {
+		this.findKey.setEnabled(true);
+		this.cardsToPick = 2;
+	}
 	public void disableButtons() {this.findKey.setEnabled(false);}
+	public void decrement() {
+		this.cardsToPick--;
+		if(this.cardsToPick <= 0) {this.disableButtons();}
+	}
+
+	public void showPick(Card drawn) {
+		this.feedbackText.setText("Picked "+drawn.getText());
+	}
 }
 
 class EndTurnPanel extends JPanel {
@@ -340,5 +360,23 @@ class DrainingController implements ActionListener {
 
 		if(didDry) {this.ap.decrementRemainingActions();}
 
+	}
+}
+
+class DrawKeyController implements ActionListener {
+	ForbiddenIsland game;
+	FindKeyPanel fkp;
+
+	public DrawKeyController(ForbiddenIsland game, FindKeyPanel fkp) {
+		this.game = game;
+		this.fkp = fkp;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		fkp.decrement();
+
+		Card drawn = game.getDeck().draw(); //Draws the card
+		game.getCurrentPlayer().giveCard(drawn);
+		fkp.showPick(drawn);
 	}
 }

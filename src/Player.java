@@ -31,4 +31,5 @@ public class Player {
 
 	public Cell getCell() {return this.cell;}
 
+	public void giveCard(Card c) {this.hand.add(c);}
 }
