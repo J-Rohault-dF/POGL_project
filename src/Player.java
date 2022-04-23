@@ -32,4 +32,17 @@ public class Player {
 	public Cell getCell() {return this.cell;}
 
 	public void giveCard(Card c) {this.hand.add(c);}
+
+	public String[] getInventory() {
+		ArrayList<String> s = new ArrayList<>();
+
+		for(Card c : hand) {
+			s.add(c.getText());
+		}
+		/*for(Treasure t : artefacts) {
+			s.add(t.getText());
+		}*/
+
+		return s.toArray(new String[0]);
+	}
 }

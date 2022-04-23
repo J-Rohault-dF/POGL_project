@@ -76,6 +76,7 @@ class ActionsPanel extends JPanel {
 		this.currentPlayer = this.game.nextPlayer();
 		this.remainingActions = 3;
 		this.label.setText("Remaining actions: "+this.remainingActions);
+		this.inventoryPanel.showInventory(this.game.getCurrentPlayer());
 
 		this.resetButtons();
 	}
@@ -209,18 +210,24 @@ class DrainingPanel extends JPanel {
 
 class InventoryPanel extends JPanel {
 	JTextArea inventoryDisplayer;
+	Player curPlayer;
 
 	public InventoryPanel() {
-		this.inventoryDisplayer = new JTextArea();
-		inventoryDisplayer.setEnabled(false);
+		this.inventoryDisplayer = new JTextArea(4, 20);
+		inventoryDisplayer.setEnabled(true);
 		inventoryDisplayer.setEditable(false);
 
 		this.add(inventoryDisplayer);
 	}
 
-	public void showInventory(String[] inventory) {
+	public void showInventory(Player p) {
+		this.curPlayer = p;
+		showInventory();
+	}
+
+	public void showInventory() {
 		inventoryDisplayer.setText("");
-		for(String s : inventory) {
+		for(String s : this.curPlayer.getInventory()) {
 			inventoryDisplayer.append(s+"\n");
 		}
 	}
@@ -343,11 +350,12 @@ class DrawAndEndTurnController implements ActionListener {
 		fkp.cv.actionsPanel.disableButtons();
 		fkp.decrement();
 
-		Card drawn = game.getDeck().draw(); //Draws the card
-		game.getCurrentPlayer().giveCard(drawn);
-		fkp.showPick(drawn);
-
-		if(fkp.cardsToPick < 0) {
+		if(fkp.cardsToPick >= 0) {
+			Card drawn = game.getDeck().draw(); //Draws the card
+			game.getCurrentPlayer().giveCard(drawn);
+			fkp.showPick(drawn);
+			fkp.cv.actionsPanel.inventoryPanel.showInventory();
+		} else {
 			game.floodRandomCells(3);
 			fkp.cv.actionsPanel.startTurn();
 		}
